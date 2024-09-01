@@ -6,16 +6,17 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["mongodb"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
+// Use `ObjectId` for MongoDB
 model Siswa {
-  id             Int         @id @default(autoincrement())
+  id             String      @id @default(auto()) @map("_id") @db.ObjectId
   nama           String
   absen          Int
   no_hp          String
@@ -24,16 +25,16 @@ model Siswa {
 }
 
 model Mapel {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   nama_mapel String
   pengajar   Guru     @relation(fields: [guruId], references: [id])
-  guruId     Int
-  dataTugas  Tugas[]  @relation("MapelTugas")
-  jadwals    Jadwal[] @relation("MapelJadwal")
+  guruId     String   @db.ObjectId
+  dataTugas  TugasOnMapel[]
+  jadwals    Jadwal[]
 }
 
 model StatusPembayaran {
-  id     Int    @id @default(autoincrement())
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
   status Status @default(BelumBayar)
 }
 
@@ -44,30 +45,30 @@ enum Status {
 }
 
 model Guru {
-  id      Int      @id @default(autoincrement())
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
   nama    String
   mapels  Mapel[]
   jadwals Jadwal[]
 }
 
 model Tugas {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
   description   String
   startTugas    DateTime
   deadlineTugas DateTime
-  mapels        Mapel[]  @relation("MapelTugas")
+  mapels        TugasOnMapel[]
   jadwal        Jadwal   @relation("TugasJadwal", fields: [jadwalId], references: [id])
-  jadwalId      Int
+  jadwalId      String   @db.ObjectId
 }
 
 model Transaksi {
-  id      Int   @id @default(autoincrement())
-  siswa   Siswa @relation(fields: [siswaId], references: [id])
-  siswaId Int
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  siswa   Siswa  @relation(fields: [siswaId], references: [id])
+  siswaId String @db.ObjectId
 }
 
 model JamMengajar {
-  id          Int      @id @default(autoincrement())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   hari        String
   sesi        Int
   jamMengajar String
@@ -75,16 +76,25 @@ model JamMengajar {
 }
 
 model Jadwal {
-  id            Int         @id @default(autoincrement())
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
   jamMengajar   JamMengajar @relation(fields: [jamMengajarId], references: [id])
-  jamMengajarId Int
-  guru          Guru        @relation(fields: [guruId], references: [id])
-  guruId        Int
-  mapel         Mapel       @relation("MapelJadwal", fields: [mapelId], references: [id])
-  mapelId       Int
-  tugas         Tugas[]     @relation("TugasJadwal")
-
+  jamMengajarId String   @db.ObjectId
+  guru          Guru     @relation(fields: [guruId], references: [id])
+  guruId        String   @db.ObjectId
+  mapel         Mapel    @relation(fields: [mapelId], references: [id])
+  mapelId       String   @db.ObjectId
+  tugas         Tugas[]  @relation("TugasJadwal")
+  
   // Computed fields, not stored
   hari String @default("")
   sesi Int    @default(0)
+}
+
+// Helper model to manage many-to-many relationships
+model TugasOnMapel {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  mapel      Mapel    @relation(fields: [mapelId], references: [id])
+  mapelId    String   @db.ObjectId
+  tugas      Tugas    @relation(fields: [tugasId], references: [id])
+  tugasId    String   @db.ObjectId
 }
