@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Siswa {
+  id             Int         @id @default(autoincrement())
+  nama           String
+  absen          Int
+  no_hp          String
+  email          String
+  transaksiSiswa Transaksi[]
+}
+
+model Mapel {
+  id         Int      @id @default(autoincrement())
+  nama_mapel String
+  pengajar   Guru     @relation(fields: [guruId], references: [id])
+  guruId     Int
+  dataTugas  Tugas[]  @relation("MapelTugas")
+  jadwals    Jadwal[] @relation("MapelJadwal")
+}
+
+model StatusPembayaran {
+  id     Int    @id @default(autoincrement())
+  status Status @default(BelumBayar)
+}
+
+enum Status {
+  Lunas
+  BayarSetengah
+  BelumBayar
+}
+
+model Guru {
+  id      Int      @id @default(autoincrement())
+  nama    String
+  mapels  Mapel[]
+  jadwals Jadwal[]
+}
+
+model Tugas {
+  id            Int      @id @default(autoincrement())
+  description   String
+  startTugas    DateTime
+  deadlineTugas DateTime
+  mapels        Mapel[]  @relation("MapelTugas")
+  jadwal        Jadwal   @relation("TugasJadwal", fields: [jadwalId], references: [id])
+  jadwalId      Int
+}
+
+model Transaksi {
+  id      Int   @id @default(autoincrement())
+  siswa   Siswa @relation(fields: [siswaId], references: [id])
+  siswaId Int
+}
+
+model JamMengajar {
+  id          Int      @id @default(autoincrement())
+  hari        String
+  sesi        Int
+  jamMengajar String
+  jadwals     Jadwal[]
+}
+
+model Jadwal {
+  id            Int         @id @default(autoincrement())
+  jamMengajar   JamMengajar @relation(fields: [jamMengajarId], references: [id])
+  jamMengajarId Int
+  guru          Guru        @relation(fields: [guruId], references: [id])
+  guruId        Int
+  mapel         Mapel       @relation("MapelJadwal", fields: [mapelId], references: [id])
+  mapelId       Int
+  tugas         Tugas[]     @relation("TugasJadwal")
+
+  // Computed fields, not stored
+  hari String @default("")
+  sesi Int    @default(0)
+}
