@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["mongodb"]
 }
 
 datasource db {
@@ -20,15 +19,22 @@ model Siswa {
   nama           String
   absen          Int
   no_hp          String
+  password       String
   email          String
+  role Role
   transaksiSiswa Transaksi[]
 }
 
+enum Role {
+Admin
+User
+}
+
 model Mapel {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String         @id @default(auto()) @map("_id") @db.ObjectId
   nama_mapel String
-  pengajar   Guru     @relation(fields: [guruId], references: [id])
-  guruId     String   @db.ObjectId
+  pengajar   Guru           @relation(fields: [guruId], references: [id])
+  guruId     String         @db.ObjectId
   dataTugas  TugasOnMapel[]
   jadwals    Jadwal[]
 }
@@ -52,13 +58,13 @@ model Guru {
 }
 
 model Tugas {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
   description   String
   startTugas    DateTime
   deadlineTugas DateTime
   mapels        TugasOnMapel[]
-  jadwal        Jadwal   @relation("TugasJadwal", fields: [jadwalId], references: [id])
-  jadwalId      String   @db.ObjectId
+  jadwal        Jadwal         @relation("TugasJadwal", fields: [jadwalId], references: [id])
+  jadwalId      String         @db.ObjectId
 }
 
 model Transaksi {
@@ -76,15 +82,15 @@ model JamMengajar {
 }
 
 model Jadwal {
-  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
   jamMengajar   JamMengajar @relation(fields: [jamMengajarId], references: [id])
-  jamMengajarId String   @db.ObjectId
-  guru          Guru     @relation(fields: [guruId], references: [id])
-  guruId        String   @db.ObjectId
-  mapel         Mapel    @relation(fields: [mapelId], references: [id])
-  mapelId       String   @db.ObjectId
-  tugas         Tugas[]  @relation("TugasJadwal")
-  
+  jamMengajarId String      @db.ObjectId
+  guru          Guru        @relation(fields: [guruId], references: [id])
+  guruId        String      @db.ObjectId
+  mapel         Mapel       @relation(fields: [mapelId], references: [id])
+  mapelId       String      @db.ObjectId
+  tugas         Tugas[]     @relation("TugasJadwal")
+
   // Computed fields, not stored
   hari String @default("")
   sesi Int    @default(0)
@@ -92,9 +98,9 @@ model Jadwal {
 
 // Helper model to manage many-to-many relationships
 model TugasOnMapel {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  mapel      Mapel    @relation(fields: [mapelId], references: [id])
-  mapelId    String   @db.ObjectId
-  tugas      Tugas    @relation(fields: [tugasId], references: [id])
-  tugasId    String   @db.ObjectId
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  mapel   Mapel  @relation(fields: [mapelId], references: [id])
+  mapelId String @db.ObjectId
+  tugas   Tugas  @relation(fields: [tugasId], references: [id])
+  tugasId String @db.ObjectId
 }
