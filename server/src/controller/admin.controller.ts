@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import prisma from "../db";
 /** CRUD Account User */
+// Create User
 const addAccountUser = async (req: Request, res: Response) => {
   try {
     const { namaSiswa, emailSiswa, passwordSiswa, noHpSiswa, absenSiswa } =
@@ -15,12 +16,7 @@ const addAccountUser = async (req: Request, res: Response) => {
       },
     });
     if (checkAccount)
-      return res
-        .status(400)
-        .json({
-          message:
-            "Data telah digunakan, tolong periksa lagi ata yang anda masukan!",
-        });
+      return res.status(404).json({ message: "Account not found" });
 
     const encryptedPasswowrd = bcrypt.hash(
       passwordSiswa,
@@ -46,6 +42,7 @@ const addAccountUser = async (req: Request, res: Response) => {
   }
 };
 
+// Delete User
 const deleteAccountUser = async (req: Request, res: Response) => {
   try {
     const userId = String(req.params.id);
@@ -56,5 +53,25 @@ const deleteAccountUser = async (req: Request, res: Response) => {
   }
 };
 
-export { addAccountUser, deleteAccountUser };
+// update user
+const updateData = (req: Request, res: Response) => {
+  try {
+    const idUser = req.params.id;
+    const newData = req.body;
 
+    const searchUser = prisma.siswa.findUnique({ where: { id: idUser } });
+    if (!searchUser) return res.status(404).json({ message: "User not found" });
+    const updateData = prisma.siswa.update({
+      where: { id: idUser },
+      data: {
+        nama: String(newData.nama),
+        absen: Number(newData.absen),
+        email: String(),
+      },
+    });
+  } catch (error) {
+    return res.status(500);
+  }
+};
+
+export { addAccountUser, deleteAccountUser };
