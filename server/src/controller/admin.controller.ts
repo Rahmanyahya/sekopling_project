@@ -74,4 +74,4 @@ const updateData = (req: Request, res: Response) => {
   }
 };
 
-export { addAccountUser, deleteAccountUser };
+export { addAccountUser, deleteAccountUser, updateData };
