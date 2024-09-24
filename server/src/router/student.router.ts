@@ -1,14 +1,10 @@
-import { Router } from "express";
-import {CreateSiswa, deleteStudent, readStudent, updateStudent} from "../controller/student.controller"
-import {createValidation, updateValidation} from "../middleware/studentMiddleware"
+import { Router } from 'express';
+import { CreateStudent, readStudent, updateStudent, deleteStudent } from '../controller/student.controller';
 const router = Router();
 
-router.post(`/`, [createValidation], CreateSiswa)
+router.post('/create-student', CreateStudent);
+router.get('/read-student', readStudent);
+router.put('/update-student/:id', updateStudent);
+router.delete('/delete-student/:id', deleteStudent);
 
-router.get(`/`, readStudent)
-
-router.get(`/:id`, [updateValidation], updateStudent)
-
-router.delete(`/:id`, [deleteStudent], deleteStudent)
-
-export default router
+export default router;

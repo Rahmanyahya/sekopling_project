@@ -1,8 +1,10 @@
 // import package
 import Express from "express";
 import Login from "./auth/login.router"
-import StudentRoute from "./router/student.router"
 import dotenv from 'dotenv'
+import loginRouter from './router/login.router'
+import adminRouter from './router/admin.router'
+import studentRouter from './router/student.router'
 dotenv.config()
 
 // Declaration
@@ -15,7 +17,10 @@ app.use(Express.urlencoded({ extended: true }))
 app.use(cors())
 
 app.use('/auth-api', Login)
-app.use('/student', StudentRoute)
+app.use('/auth', loginRouter);
+app.use('/admin', adminRouter);
+app.use('/student', studentRouter);
+
 
 app.listen(process.env.port, () => {console.log(`Listen on port ${process.env.port} | http://localhost:${process.env.port}`)})
 

@@ -3,8 +3,9 @@ import bcrypt from "bcrypt";
 import prisma from "../db";
 import { error } from "console";
 
+
 /** Schema untuk Create  */
-const CreateSiswa = async (req: Request, res:Response) => {
+const CreateStudent = async (req: Request, res:Response) => {
     try {
         const {
         namaSiswa,
@@ -42,7 +43,7 @@ const CreateSiswa = async (req: Request, res:Response) => {
                 absen: Number(absenSiswa),
                 role: "User",
             }
-        })
+        });
     }catch (error){
 
         console.log(error);
@@ -143,4 +144,4 @@ const deleteStudent = async (req: Request, res: Response) => {
     }
 }
 
-export {CreateSiswa, readStudent ,updateStudent, deleteStudent}
+export {CreateStudent, readStudent ,updateStudent, deleteStudent}
