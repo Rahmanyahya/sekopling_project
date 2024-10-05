@@ -25,9 +25,13 @@ model Siswa {
   transaksiSiswa Transaksi[]
 }
 
-enum Role {
-  Admin
-  User
+
+
+enum Jabatan {
+  kETUA
+  WAKIL
+  SEKERTARIS
+  
 }
 
 model Mapel {
