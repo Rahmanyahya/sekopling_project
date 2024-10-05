@@ -22,7 +22,7 @@ const loginController = async (req: Request, res: Response) => {
 
     if (userAccount.role == "User") {
       bcrypt.compare(
-        String(Password),
+        String(Password), 
         String(userAccount.password),
         async (err, _) => {
           if (err) throw new Error("Wrong password");

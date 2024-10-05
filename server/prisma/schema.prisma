@@ -13,21 +13,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Use `ObjectId` for MongoDB
+// Use ObjectId for MongoDB
 model Siswa {
   id             String      @id @default(auto()) @map("_id") @db.ObjectId
   nama           String
   absen          Int
   no_hp          String
   password       String
-  email          String
-  role Role
+  email          String      @unique
+  role           Role
   transaksiSiswa Transaksi[]
 }
 
 enum Role {
-Admin
-User
+  Admin
+  User
 }
 
 model Mapel {
@@ -40,8 +40,9 @@ model Mapel {
 }
 
 model StatusPembayaran {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  status Status @default(BelumBayar)
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  status    Status      @default(BelumBayar)
+  transaksi Transaksi[] @relation
 }
 
 enum Status {
@@ -68,9 +69,11 @@ model Tugas {
 }
 
 model Transaksi {
-  id      String @id @default(auto()) @map("_id") @db.ObjectId
-  siswa   Siswa  @relation(fields: [siswaId], references: [id])
-  siswaId String @db.ObjectId
+  id                 String            @id @default(auto()) @map("_id") @db.ObjectId
+  siswa              Siswa             @relation(fields: [siswaId], references: [id])
+  siswaId            String            @db.ObjectId
+  StatusPembayaran   StatusPembayaran? @relation(fields: [statusPembayaranId], references: [id])
+  statusPembayaranId String?           @db.ObjectId
 }
 
 model JamMengajar {
