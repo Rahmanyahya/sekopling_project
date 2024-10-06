@@ -18,9 +18,11 @@ const config: Config = {
         "primGreen": "#6DC489",
         "primRed": "#F63F3F",
         "primOrange": "#EB8541",
+        "primBlack": "#1f1f1f",
         "secPurple": "#D3C7FB",
         "secWhite": "#F7F8FA",
         "darkGray": "#727272",
+        "darkPurple": "#4A1D95",
       }
     },
   },
